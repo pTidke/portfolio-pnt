@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   profile,
@@ -8,9 +9,10 @@ import {
   PROJECTS,
   EDUCATION,
   CERTIFICATES,
+  PHOTOS,
   TOOL_COLORS,
 } from "@/lib/data";
-import type { ModalId, SectionId, ExternalLink } from "@/lib/types";
+import type { ModalId, SectionId, ExternalLink, Photo } from "@/lib/types";
 import { EASE, Item } from "./motion";
 import {
   SectionShell,
@@ -529,9 +531,8 @@ function ExperienceModal({ index }: { index: number }) {
           {e.columns?.map((col, i) => (
             <div
               key={col.label}
-              className={`flex items-center justify-between p-[12px] px-[16px] font-mono text-[12.5px] ${
-                i > 0 ? "border-t border-line" : ""
-              }`}
+              className={`flex items-center justify-between p-[12px] px-[16px] font-mono text-[12.5px] ${i > 0 ? "border-t border-line" : ""
+                }`}
             >
               <span className="font-semibold text-ink-bright">{col.label}</span>
               <span className="text-right text-ink-ghost">{col.value}</span>
@@ -634,6 +635,172 @@ function CertificatesSection() {
   );
 }
 
+/* ── PHOTOGRAPHY ───────────────────────────────────────────────────────── */
+const galleryCode: CodeLine[] = [
+  [["{{ config(materialized=", "jinja"], ["'external'", "str"], [", file_format="], ["'parquet'", "str"], [") }}", "jinja"]],
+  [["select", "kw"], [" frame, location, shot_on, settings, captured_at"]],
+  [["from", "kw"], [" "], ["{{ source(", "jinja"], ["'life'", "str"], [", "], ["'photography'", "str"], [") }}", "jinja"]],
+];
+
+/* Card is sized in px by the justified-row layout. Box ratio == photo ratio,
+   so object-cover fills with no crop and no aspect-ratio change. */
+function PhotoCard({ p, className, style }: { p: Photo; className?: string; style?: React.CSSProperties }) {
+  const exif = p.settings || p.camera;
+  return (
+    <motion.div
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.18, ease: EASE }}
+      style={style}
+      className={`group relative overflow-hidden border border-line bg-inset ${className || ""}`}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={p.src}
+        alt={p.title ?? "Photograph"}
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+      />
+      {/* metadata — slides up on hover */}
+      {(exif || p.title || p.location) && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-2 bg-gradient-to-t from-black/90 via-black/50 to-transparent px-3 pb-[9px] pt-8 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          {p.title && (
+            <div className="truncate text-[12.5px] font-semibold text-white">
+              {p.title}
+            </div>
+          )}
+          {p.settings && (
+            <div className="font-mono text-[11px] font-medium" style={{ color: "#c4b5fd" }}>
+              {p.settings}
+            </div>
+          )}
+          {(p.camera || p.location || p.year) && (
+            <div className="mt-[1px] truncate font-mono text-[10px] text-white/70">
+              {[p.location, p.camera, p.year].filter(Boolean).join(" · ")}
+            </div>
+          )}
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+/* Justified Gallery (Flickr / Google-Photos style): each row is scaled to a target
+   height, then stretched to fill the container width. Every photo keeps its exact
+   aspect ratio — no crop — and landscapes stay wide because width = height × ratio.
+   Rows fill edge-to-edge, so blank space is minimal. */
+const GAP = 10;
+
+type JustifiedRow = { photos: Photo[]; height: number };
+
+function buildRows(photos: Photo[], width: number, target: number, maxPerRow: number): JustifiedRow[] {
+  if (!width) return [];
+  const rows: JustifiedRow[] = [];
+  let row: Photo[] = [];
+  let ratioSum = 0;
+
+  for (const p of photos) {
+    row.push(p);
+    ratioSum += p.width / p.height;
+    // height needed for this row to span the full width, accounting for inter-photo gaps
+    const rowHeight = (width - (row.length - 1) * GAP) / ratioSum;
+    // close the row once it would span full width at target height, OR it hits the
+    // per-row cap — the cap keeps portraits from being crammed thin into one row
+    if (rowHeight <= target || row.length >= maxPerRow) {
+      rows.push({ photos: row, height: rowHeight });
+      row = [];
+      ratioSum = 0;
+    }
+  }
+  // trailing partial row: keep photos at target height (left-aligned) rather than
+  // blowing up a lone landscape to fill the whole width
+  if (row.length) {
+    const fill = (width - (row.length - 1) * GAP) / ratioSum;
+    rows.push({ photos: row, height: Math.min(target, fill) });
+  }
+  return rows;
+}
+
+function BentoGallery({ photos }: { photos: Photo[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const small = Boolean(width) && width < 640;
+  const target = small ? 220 : 300;
+  const maxPerRow = small ? 3 : 4;
+  const rows = useMemo(
+    () => buildRows(photos, width, target, maxPerRow),
+    [photos, width, target, maxPerRow],
+  );
+
+  return (
+    <div ref={containerRef} className="mt-[18px] flex flex-col" style={{ gap: GAP }}>
+      {rows.map((row, i) => (
+        <div key={i} className="flex" style={{ gap: GAP }}>
+          {row.photos.map((p) => (
+            <PhotoCard
+              key={p.src}
+              p={p}
+              style={{ width: row.height * (p.width / p.height), height: row.height }}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* Fisher–Yates shuffle — returns a new array, leaves the source untouched */
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function GallerySection() {
+  const filledPhotos = useMemo(() => {
+    return PHOTOS.map((p) => ({
+      ...p,
+      camera: p.camera || "iPhone 17 Pro",
+      settings: p.settings || "24mm f/1.78 ISO 100",
+      year: p.year || "2025",
+    }));
+  }, []);
+
+  // Shuffle after mount only — keeps SSR/first paint deterministic (no hydration
+  // mismatch); reshuffles every time the gallery modal opens, since it remounts.
+  const [photos, setPhotos] = useState(filledPhotos);
+  useEffect(() => setPhotos(shuffle(filledPhotos)), [filledPhotos]);
+
+  return (
+    <SectionShell
+      accent="violet"
+      path="models / gallery.parquet"
+      layer="exposure"
+      code={galleryCode}
+      compiled={`COMPILED · ${filledPhotos.length} frames`}
+    >
+      <Item>
+        <p className="mt-4 max-w-[560px] text-[14.5px] leading-[1.5] text-ink-dim">
+          What I shoot when I&apos;m away from the keyboard. Same instinct as the
+          pipelines — find the signal, frame it cleanly.
+        </p>
+      </Item>
+      <BentoGallery photos={photos} />
+    </SectionShell>
+  );
+}
+
 /* ── modal content dispatcher ──────────────────────────────────────────── */
 export function ModalBody({ id, accent }: { id: ModalId; accent: string }) {
   if (id === "about") return <AboutMd />;
@@ -641,6 +808,7 @@ export function ModalBody({ id, accent }: { id: ModalId; accent: string }) {
   if (id === "education") return <EducationSection />;
   if (id === "skills") return <Skills />;
   if (id === "certificates") return <CertificatesSection />;
+  if (id === "gallery") return <GallerySection />;
   const [kind, nStr] = id.split(":");
   const i = Number(nStr);
   if (kind === "proj") return <ProjectSection id={PROJECTS[i].id} accent={accent} />;
@@ -663,6 +831,7 @@ export function Section({
   if (id === "skills") return <Skills />;
   if (id === "education") return <EducationSection />;
   if (id === "certificates") return <CertificatesSection />;
+  if (id === "gallery") return <GallerySection />;
   if (id === "contact") return <Contact accent={accent} />;
   if (id.startsWith("p")) return <ProjectSection id={id} accent={accent} />;
   return null;

@@ -34,6 +34,7 @@ const MOBILE_ORDER: SectionId[] = [
   "p4",
   "p5",
   "p6",
+  "gallery",
   "contact",
 ];
 
@@ -100,6 +101,7 @@ export default function Workspace() {
       else if (id === "education") openModal("education");
       else if (id === "skills") openModal("skills");
       else if (id === "certificates") openModal("certificates");
+      else if (id === "gallery") openModal("gallery");
       else if (id.startsWith("p")) {
         const i = PROJECTS.findIndex((p) => p.id === id);
         if (i >= 0) openModal(`proj:${i}`);
@@ -115,6 +117,7 @@ export default function Workspace() {
       if (modalId === "education") return "education";
       if (modalId === "skills") return "skills";
       if (modalId === "certificates") return "certificates";
+      if (modalId === "gallery") return "gallery";
       const [kind, n] = modalId.split(":");
       if (kind === "proj") return PROJECTS[Number(n)].id;
     }

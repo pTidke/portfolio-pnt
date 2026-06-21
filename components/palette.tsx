@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { JUMP_GROUPS, accentColor, ASK_SUGGESTIONS } from "@/lib/data";
 import type { JumpItem } from "@/lib/types";
 import { EASE } from "./motion";
+import { Markdown } from "./markdown";
 
 type Mode = "jump" | "ask";
 interface Msg {
@@ -31,6 +32,7 @@ export default function CommandPalette({
   const [askInput, setAskInput] = useState("");
   const [messages, setMessages] = useState<Msg[]>([]);
   const [sending, setSending] = useState(false);
+  const conversationId = useRef<string | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -88,23 +90,34 @@ export default function CommandPalette({
     }
   }
 
-  /* ── Ask AI — backend STUBBED. Wire a real /api/ask route later. ─────── */
+  /* ── Ask AI — live via /api/ask (Azure AI Foundry Agent). ─────────────── */
   async function sendAsk() {
     const q = askInput.trim();
     if (!q || sending) return;
     setMessages((m) => [...m, { role: "user", text: q }]);
     setAskInput("");
     setSending(true);
-    // TODO(backend): replace with fetch('/api/ask', ...) calling Claude.
-    await new Promise((r) => setTimeout(r, 750));
-    setMessages((m) => [
-      ...m,
-      {
-        role: "assistant",
-        text: "Thanks for trying this — the assistant is in preview and will answer live soon. For now, jump straight to any section, or reach me from the contact page.",
-      },
-    ]);
-    setSending(false);
+    try {
+      const res = await fetch("/api/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: q, conversationId: conversationId.current }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? "request failed");
+      conversationId.current = data.conversationId; // keep the conversation for follow-ups
+      setMessages((m) => [...m, { role: "assistant", text: data.answer }]);
+    } catch {
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          text: "Sorry — I couldn't reach the assistant just now. Try again in a moment, or reach me from the contact page.",
+        },
+      ]);
+    } finally {
+      setSending(false);
+    }
   }
 
   const tabStyle = (activeMode: Mode) =>
@@ -292,7 +305,11 @@ export default function CommandPalette({
                               }
                         }
                       >
-                        {m.text}
+                        {m.role === "assistant" ? (
+                          <Markdown text={m.text} />
+                        ) : (
+                          m.text
+                        )}
                       </div>
                     </motion.div>
                   ))}

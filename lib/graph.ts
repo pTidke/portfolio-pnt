@@ -83,6 +83,16 @@ export const SUB: Record<Exclude<ViewId, "overview">, SubView> = {
         accent: "amber",
         modal: "certificates",
       },
+      {
+        id: "gallery",
+        kind: "OUTPUT",
+        title: "Photography",
+        label: "exp.gallery",
+        sub: "off the clock",
+        body: "Frames I take away from the keyboard.",
+        accent: "violet",
+        modal: "gallery",
+      },
     ],
   },
   experience: {
@@ -133,6 +143,7 @@ export function modalLabel(id: ModalId): string {
   if (id === "education") return "education.sql";
   if (id === "skills") return "skills.yml";
   if (id === "certificates") return "certificates.md";
+  if (id === "gallery") return "gallery.parquet";
   const [kind, nStr] = id.split(":");
   const i = Number(nStr);
   if (kind === "proj") return PROJECTS[i].file;
@@ -148,6 +159,7 @@ export function modalNav(id: ModalId): "about" | "contact" | "experience" | "pro
   if (id === "education") return "about";
   if (id === "skills") return "about";
   if (id === "certificates") return "about";
+  if (id === "gallery") return "about";
   const kind = id.split(":")[0];
   if (kind === "proj") return "projects";
   if (kind === "exp") return "experience";
