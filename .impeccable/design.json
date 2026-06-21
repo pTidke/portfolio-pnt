@@ -1,0 +1,192 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-20T00:00:00Z",
+  "title": "Design System: Prajwal Tidke — Portfolio",
+  "extensions": {
+    "colorMeta": {
+      "lineage-blue": {
+        "role": "primary",
+        "displayName": "Lineage Blue",
+        "canonical": "#5b9dff",
+        "lightText": "#1a56db",
+        "note": "Structural accent: active/lineage/focus, DAG edges, nav underline, primary button, SQL keywords. Bright value for fills/edges; lightText for accent-as-text on the light surface.",
+        "tonalRamp": ["#0b1d40", "#123060", "#1a4488", "#235bb0", "#3d7ad8", "#5b9dff", "#8cbcff", "#c2dbff"]
+      },
+      "staging-teal": {
+        "role": "secondary",
+        "displayName": "Staging Teal",
+        "canonical": "#2dd4bf",
+        "lightText": "#0f766e",
+        "note": "dbt staging layer — experience, skills.",
+        "tonalRamp": ["#0a2e2a", "#0f4a43", "#13675d", "#178578", "#1fae9c", "#2dd4bf", "#73e3d4", "#b6f1e9"]
+      },
+      "mart-amber": {
+        "role": "secondary",
+        "displayName": "Mart Amber",
+        "canonical": "#fbbf24",
+        "lightText": "#92610a",
+        "note": "dbt mart layer — project case studies, headline metrics.",
+        "tonalRamp": ["#3a2a05", "#5c420a", "#7e5a0d", "#a17612", "#cf991b", "#fbbf24", "#fcd462", "#fde9a6"]
+      },
+      "exposure-green": {
+        "role": "secondary",
+        "displayName": "Exposure Green",
+        "canonical": "#4ade80",
+        "lightText": "#177a3a",
+        "note": "Exposures + live status — contact, ready build state, open-to-work pill.",
+        "tonalRamp": ["#0a2e18", "#0f4a26", "#156634", "#1c8444", "#2cae5c", "#4ade80", "#86e8a9", "#bdf3d0"]
+      },
+      "jinja-purple": {
+        "role": "tertiary",
+        "displayName": "Jinja Purple",
+        "canonical": "#c084fc",
+        "lightText": "#7e22ce",
+        "note": "Code-block syntax only — Jinja refs/config.",
+        "tonalRamp": ["#2a1340", "#412063", "#5a2d88", "#743bad", "#9a5fd8", "#c084fc", "#d6abfd", "#ecd6fe"]
+      },
+      "window": {
+        "role": "neutral",
+        "displayName": "Editor Window",
+        "canonical": "#0a0f1c",
+        "lightValue": "#ffffff",
+        "note": "The main editor surface behind content.",
+        "tonalRamp": ["#06090f", "#0a0f1c", "#0c1322", "#13203a", "#243049", "#5d6b88", "#9fb0c9", "#e6ecf5"]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Body Ink",
+        "canonical": "#e6ecf5",
+        "lightValue": "#1b2333",
+        "note": "Primary reading ink; ramp runs ink-bright → ink-lower.",
+        "tonalRamp": ["#1b2333", "#4a5878", "#5d6b88", "#7e8ba6", "#9fb0c9", "#b8c4d6", "#d4ddea", "#f1f5fb"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "The name on the identity/about model. One per surface (40px, 34px in modals)." },
+      "headline": { "displayName": "Headline", "purpose": "Project and modal titles (24px)." },
+      "title": { "displayName": "Title", "purpose": "Card headings — role, degree, domain (17px)." },
+      "body": { "displayName": "Body", "purpose": "Prose held to ~65–75ch (14.5–16px IBM Plex Sans)." },
+      "label": { "displayName": "Label / Mono", "purpose": "Machine voice — paths, layer tags, COMPILED stamps, breadcrumbs (JetBrains Mono, tracked)." },
+      "code": { "displayName": "Code", "purpose": "Syntax-highlighted SQL/YAML blocks (JetBrains Mono 12.5px)." }
+    },
+    "shadows": [
+      { "name": "window", "value": "0 28px 90px rgba(0,0,0,0.6)", "lightValue": "0 20px 60px rgba(15,23,42,0.14)", "purpose": "The app window lifting off the dot-grid." },
+      { "name": "pop", "value": "0 30px 90px rgba(0,0,0,0.7)", "lightValue": "0 24px 70px rgba(15,23,42,0.2)", "purpose": "Modals and the command palette." },
+      { "name": "node", "value": "0 2px 8px rgba(0,0,0,0.3)", "lightValue": "0 1px 3px rgba(15,23,42,0.1)", "purpose": "DAG node at rest." },
+      { "name": "node-hover", "value": "0 0 0 3px {accent}30, 0 10px 26px rgba(0,0,0,0.45)", "lightValue": "0 0 0 3px {accent}30, 0 8px 22px rgba(15,23,42,0.16)", "purpose": "DAG node on hover — colored ring + lift." }
+    ],
+    "motion": [
+      { "name": "hover-lift", "value": "transform 0.18s ease-out", "purpose": "Universal 2px hover lift on cards, tags, buttons." },
+      { "name": "edge-pulse", "value": "stroke-dashoffset 2.2s linear infinite", "purpose": "Data pulse traveling each DAG edge source→target; pathLength-normalized." },
+      { "name": "nav-underline", "value": "shared-layout spring (framer layoutId)", "purpose": "Active nav underline slides between links." },
+      { "name": "reduced-motion", "value": "@media (prefers-reduced-motion: reduce) → animations collapse to ~0ms; DAG pulse disabled, static edge only", "purpose": "Required fallback for all motion." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "880px", "note": "Below this the IDE collapses to stacked sections + compact top bar." },
+      { "name": "sm", "value": "640px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (resume.pdf)",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single filled element on a surface — download/primary CTA in Lineage Blue.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">↓ resume.pdf</a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; background: var(--c-accent-blue, #5b9dff); color: #04101f; font-family: var(--font-jetbrains), ui-monospace, monospace; font-weight: 700; font-size: 12.5px; padding: 8px 16px; border: none; border-radius: 0; cursor: pointer; transition: transform 0.18s ease-out, filter 0.18s ease-out; } .ds-btn-primary:hover { transform: translateY(-2px); filter: brightness(1.08); } .ds-btn-primary:active { transform: scale(0.97); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Hairline-bordered utility button — search, run, theme toggle.",
+      "html": "<button class=\"ds-btn-ghost\">⌘K <span class=\"ds-btn-ghost__hint\">search</span></button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 6px; background: transparent; color: var(--c-ink-muted, #9fb0c9); font-family: var(--font-jetbrains), ui-monospace, monospace; font-size: 11.5px; padding: 5px 11px; border: 1px solid var(--c-line-mid, #243049); border-radius: 0; cursor: pointer; transition: color 0.15s ease-out; } .ds-btn-ghost:hover { color: var(--c-ink, #e6ecf5); } .ds-btn-ghost__hint { color: var(--c-ink-low, #5d6b88); }"
+    },
+    {
+      "name": "Content Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Hairline-bordered content card; lifts 2px and shifts border on hover.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card__head\"><span class=\"ds-card__title\">Data Engineer</span><span class=\"ds-card__span\">2023 — now</span></div><p class=\"ds-card__body\">Built and owned the lineage from raw sources to marts.</p></div>",
+      "css": ".ds-card { background: var(--c-card, #0b1322); border: 1px solid var(--c-line, #1c2740); border-radius: 0; padding: 15px 17px; transition: transform 0.18s ease-out, border-color 0.18s ease-out; } .ds-card:hover { transform: translateY(-2px); border-color: var(--c-line-hover, #2a3958); } .ds-card__head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; } .ds-card__title { font-family: var(--font-plex), system-ui, sans-serif; font-size: 17px; font-weight: 600; color: var(--c-ink-bright, #f1f5fb); } .ds-card__span { font-family: var(--font-jetbrains), monospace; font-size: 12px; color: var(--c-ink-ghost, #7e8ba6); } .ds-card__body { margin: 7px 0 0; font-family: var(--font-plex), system-ui, sans-serif; font-size: 14.5px; line-height: 1.5; color: var(--c-ink-dim, #b8c4d6); }"
+    },
+    {
+      "name": "Tag / Chip",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Mono pill on a hairline border; lifts on hover.",
+      "html": "<span class=\"ds-tag\">dbt</span>",
+      "css": ".ds-tag { display: inline-flex; background: var(--c-chrome, #0c1322); color: var(--c-ink-muted, #9fb0c9); font-family: var(--font-jetbrains), monospace; font-size: 12px; padding: 5px 11px; border: 1px solid var(--c-line-mid, #243049); border-radius: 0; transition: transform 0.18s ease-out, border-color 0.18s ease-out, color 0.18s ease-out; } .ds-tag:hover { transform: translateY(-2px); border-color: var(--c-line-hover, #2a3958); color: var(--c-ink-soft, #d4ddea); }"
+    },
+    {
+      "name": "Search Input",
+      "kind": "input",
+      "refersTo": "input-search",
+      "description": "Command-palette / console input — mono, hairline, blinking caret accent.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"jump to a model…\" />",
+      "css": ".ds-input { width: 100%; background: var(--c-card, #0b1322); color: var(--c-ink, #e6ecf5); font-family: var(--font-jetbrains), monospace; font-size: 13.5px; padding: 10px 12px; border: 1px solid var(--c-line-mid, #243049); border-radius: 0; outline: none; transition: border-color 0.15s ease-out; } .ds-input::placeholder { color: var(--c-ink-low, #5d6b88); } .ds-input:focus { border-color: var(--c-accent-blue, #5b9dff); }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Open-to-work / build status — accent text on a faint same-hue tint, with a pulsing dot.",
+      "html": "<span class=\"ds-pill\"><span class=\"ds-pill__dot\"></span>open to work</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-jetbrains), monospace; font-size: 12px; padding: 5px 12px; border-radius: 0; color: var(--c-accent-green, #4ade80); border: 1px solid color-mix(in srgb, var(--c-accent-green, #4ade80) 38%, transparent); background: color-mix(in srgb, var(--c-accent-green, #4ade80) 12%, transparent); } .ds-pill__dot { width: 7px; height: 7px; border-radius: 9999px; background: var(--c-accent-green, #4ade80); animation: ds-pulse 2s infinite; } @keyframes ds-pulse { 0% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); } 70% { box-shadow: 0 0 0 7px rgba(74,222,128,0); } 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); } }"
+    },
+    {
+      "name": "DAG Node",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Signature lineage node — layer tag + model name + subtitle; lifts to accent border + glow on hover.",
+      "html": "<button class=\"ds-node\"><div class=\"ds-node__top\"><span class=\"ds-node__dot\"></span><span class=\"ds-node__kind\">STAGING</span><span class=\"ds-node__hint\">expand →</span></div><div class=\"ds-node__name\">stg.experience</div><div class=\"ds-node__sub\">3 roles</div></button>",
+      "css": ".ds-node { display: flex; flex-direction: column; gap: 2px; text-align: left; width: 300px; padding: 14px; background: var(--c-chrome, #0c1322); border: 1px solid var(--c-line-mid, #243049); border-radius: 0; cursor: pointer; box-shadow: var(--shadow-node, 0 2px 8px rgba(0,0,0,0.3)); transition: transform 0.2s ease-out, border-color 0.2s ease-out, box-shadow 0.2s ease-out; } .ds-node:hover { transform: scale(1.025); border-color: var(--c-accent-teal, #2dd4bf); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-accent-teal, #2dd4bf) 19%, transparent), var(--shadow-node-hover, 0 10px 26px rgba(0,0,0,0.45)); } .ds-node__top { display: flex; align-items: center; gap: 7px; } .ds-node__dot { width: 9px; height: 9px; border-radius: 9999px; background: var(--c-accent-teal, #2dd4bf); } .ds-node__kind { font-family: var(--font-jetbrains), monospace; font-size: 9px; letter-spacing: 1px; color: var(--c-ink-muted, #9fb0c9); } .ds-node__hint { margin-left: auto; font-family: var(--font-jetbrains), monospace; font-size: 9px; color: var(--c-ink-muted, #9fb0c9); } .ds-node__name { margin-top: 4px; font-family: var(--font-jetbrains), monospace; font-weight: 700; font-size: 13px; color: var(--c-ink, #e6ecf5); } .ds-node__sub { font-family: var(--font-jetbrains), monospace; font-size: 12px; color: var(--c-ink-faint, #8a97ad); }"
+    },
+    {
+      "name": "Nav Link (active)",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Mono nav link with an animated Lineage-Blue underline on the active item.",
+      "html": "<nav class=\"ds-nav\"><button class=\"ds-nav__link\">about</button><button class=\"ds-nav__link ds-nav__link--active\">experience</button><button class=\"ds-nav__link\">projects</button></nav>",
+      "css": ".ds-nav { display: inline-flex; gap: 2px; font-family: var(--font-jetbrains), monospace; font-size: 12px; } .ds-nav__link { position: relative; background: transparent; border: none; padding: 5px 10px; color: var(--c-ink-ghost, #7e8ba6); cursor: pointer; transition: color 0.2s ease-out; } .ds-nav__link:hover { color: var(--c-ink, #e6ecf5); } .ds-nav__link--active { color: var(--c-ink, #e6ecf5); } .ds-nav__link--active::after { content: ''; position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; background: var(--c-accent-blue, #5b9dff); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Compiled Resume",
+    "overview": "Every section of this portfolio is a dbt model. The source — SQL or YAML — sits on top in a real code block; the rendered, human-readable fact compiles below it, stamped COMPILED · 1 row. The whole site is the artifact: an IDE shell wrapped around a drill-down DAG where src.prajwal descends into stg.experience, mart.projects, stg.skills. The design doesn't claim data-engineering competence; it renders as the tool that competence is practiced in. The voice is minimal, calm, and editorial — confident through restraint. It ships dark by default and light by choice, both themes engineered to clear WCAG AA independently.",
+    "keyCharacteristics": [
+      "Sharp corners everywhere — border-radius: 0 enforced globally; only dots are round.",
+      "Dual-theme by CSS variable — every surface/ink color is a --c-* token; nothing is raw hex.",
+      "Mono for the machine, sans for the human — JetBrains Mono for paths/code/labels, IBM Plex Sans for prose.",
+      "One structural accent (Lineage Blue) + layer-coded semantic accents (teal/amber/green/purple).",
+      "Quiet motion: a 2px lift on hover, staggered reveals, and data pulsing through the DAG edges."
+    ],
+    "rules": [
+      { "name": "The Lineage Blue Rule", "body": "Blue is structural, not decorative — active/focused/on the path. Other accents are layer codes; reach for teal or amber only when the thing genuinely belongs to that dbt layer.", "section": "colors" },
+      { "name": "The Dual-Surface Rule", "body": "No raw hex in components. Every surface/ink color is a --c-* variable, and both themes must independently clear AA (body ≥4.5:1, large ≥3:1).", "section": "colors" },
+      { "name": "The Rationed-Accent Rule", "body": "Bright accents are for fills/dots/borders/edges; accent text, numbers, and the status pill use the darkened --c-accent-* text variant.", "section": "colors" },
+      { "name": "The Mono-for-Machine Rule", "body": "JetBrains Mono for what a machine emits (code, paths, tags, metrics, provenance); IBM Plex Sans for what a human writes (names, headings, prose). Never blur the two.", "section": "typography" },
+      { "name": "The Compiled-Fact Rule", "body": "Content arrives as a compiled result of code shown directly above it. Keep the source → compile → fact rhythm.", "section": "typography" },
+      { "name": "The Sharp-Edge Rule", "body": "border-radius is 0 on every box; the Tailwind radius scale is hard-zeroed. The only round things are dots and the window traffic-lights (.dot, 9999px).", "section": "elevation" },
+      { "name": "The Theme-Tuned Shadow Rule", "body": "Never cast a black shadow on the light surface. Shadows are --shadow-* variables — deep black on dark, soft slate-tinted on light.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep border-radius: 0 on every box. Round only dots and the window traffic-lights via .dot.",
+      "Do route every color through a --c-* variable or Tailwind token, and verify both themes clear AA independently (body ≥4.5:1, large ≥3:1).",
+      "Do reserve Lineage Blue for structure (active/lineage/focus) and use teal/amber/green accents only for their dbt layer.",
+      "Do split type strictly: JetBrains Mono for machine output, IBM Plex Sans for human prose.",
+      "Do keep motion quiet — a 2px hover lift, staggered list reveals, and the one DAG-edge pulse. Always ship a prefers-reduced-motion fallback.",
+      "Do preface rendered content with its compiled source (models / x.sql → code → COMPILED)."
+    ],
+    "donts": [
+      "Don't let the IDE metaphor become a busy, dashboard-y surface — cramped panels, competing data, viz-for-its-own-sake.",
+      "Don't reach for neon dark-mode theatrics — gamer-RGB glow, saturated cyber gradients, hacker-terminal costume.",
+      "Don't ship generic SaaS-template / bootcamp-portfolio moves — stock hero gradients, identical card grids, or an eyebrow above every section.",
+      "Don't use a border-left/border-right colored side-stripe to emphasize a card. Use a full border + a mono marker.",
+      "Don't type an accent hex into a component, and never cast a black shadow on the light surface.",
+      "Don't set body prose in mono or a file path in sans. The machine/human split is load-bearing."
+    ]
+  }
+}
