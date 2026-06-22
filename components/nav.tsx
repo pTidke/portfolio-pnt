@@ -8,6 +8,7 @@ import { EASE } from "./motion";
 
 export type NavKey =
   | "about"
+  | "education"
   | "experience"
   | "projects"
   | "skills"
@@ -15,6 +16,7 @@ export type NavKey =
 
 const LINKS: { key: NavKey; label: string }[] = [
   { key: "about", label: "about" },
+  { key: "education", label: "education" },
   { key: "experience", label: "experience" },
   { key: "projects", label: "projects" },
   { key: "skills", label: "skills" },

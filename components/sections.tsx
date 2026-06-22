@@ -793,7 +793,17 @@ function GallerySection() {
       <Item>
         <p className="mt-4 max-w-[560px] text-[14.5px] leading-[1.5] text-ink-dim">
           What I shoot when I&apos;m away from the keyboard. Same instinct as the
-          pipelines — find the signal, frame it cleanly.
+          pipelines — find the signal, frame it cleanly. More on{" "}
+          <motion.a
+            href="https://www.instagram.com/clickoftime/"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ filter: "brightness(1.12)" }}
+            className="font-medium underline decoration-1 underline-offset-[3px] transition-[filter]"
+            style={{ color: "var(--c-accent-violet)" }}
+          >
+            Instagram&nbsp;↗
+          </motion.a>
         </p>
       </Item>
       <BentoGallery photos={photos} />

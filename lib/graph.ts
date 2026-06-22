@@ -153,10 +153,10 @@ export function modalLabel(id: ModalId): string {
 }
 
 /* Which nav link should highlight for an open modal. */
-export function modalNav(id: ModalId): "about" | "contact" | "experience" | "projects" | "skills" {
+export function modalNav(id: ModalId): "about" | "education" | "contact" | "experience" | "projects" | "skills" {
   if (id === "about") return "about";
   if (id === "contact") return "contact";
-  if (id === "education") return "about";
+  if (id === "education") return "education";
   if (id === "skills") return "about";
   if (id === "certificates") return "about";
   if (id === "gallery") return "about";

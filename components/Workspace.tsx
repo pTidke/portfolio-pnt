@@ -86,6 +86,7 @@ export default function Workspace() {
       if (key === "about") openModal("about");
       else if (key === "contact") openModal("contact");
       else if (key === "skills") openModal("skills");
+      else if (key === "education") openModal("education");
       else expand(key as Exclude<ViewId, "overview">);
     },
     [expand, openModal],
