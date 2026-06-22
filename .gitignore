@@ -10,3 +10,5 @@ next-env.d.ts
 
 # raw photo originals — only optimized public/photography ships
 photo-src/
+.claude
+.impeccable
