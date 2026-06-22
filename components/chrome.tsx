@@ -32,9 +32,9 @@ export function WindowChrome({
       <div className="ml-auto flex items-center gap-2 font-mono text-[11px]">
         <button
           onClick={onOpenPalette}
-          className="flex items-center gap-[6px] border border-line-mid px-[11px] py-[5px] text-ink-muted"
+          className="flex items-center gap-[6px] border border-line-mid px-[11px] py-[5px] text-ink-muted transition-colors hover:text-ink"
         >
-          ⌘K <span className="text-ink-low">search</span>
+          <span className="text-accent-blue">▸</span> jump to file
         </button>
         <ThemeToggle />
       </div>
@@ -250,44 +250,75 @@ export function FileTree({
 }
 
 /* ── console dock (desktop) ────────────────────────────────────────────── */
-export function ConsoleDock({ onOpenPalette }: { onOpenPalette: () => void }) {
+export function ConsoleDock({
+  onAsk,
+  onJump,
+}: {
+  onAsk: () => void;
+  onJump: () => void;
+}) {
   return (
     <div className="flex-none border-t border-line bg-code px-4 py-[9px]">
       <div className="flex items-center gap-3 font-mono text-[11px]">
-        {/* <span className="flex items-center gap-[6px] text-accent-green">
-          <span className="dot inline-block h-[7px] w-[7px] bg-accent-green" />
-          ready
-        </span> */}
-        {/* <span className="text-ink-lower">|</span> */}
         <span className="flex items-center gap-[6px] text-accent-teal font-medium">
           <span className="dot inline-block h-[5px] w-[5px] bg-accent-teal" style={{ animation: "statuspulse 2s infinite" }} />
           Bay Area - Open to Work
         </span>
         <span className="hidden text-ink-lower sm:inline">|</span>
         <span className="hidden text-ink-ghost sm:inline">
-          {/* build →{" "} */}
           <span className="text-accent-green">PASS={BUILD.pass}</span>{" "}
           <span className="text-ink-low">
             WARN={BUILD.warn} ERROR={BUILD.error}
           </span>{" "}
           · last run just now
         </span>
+        {/* secondary: plain file jump */}
         <button
-          onClick={onOpenPalette}
-          className="ml-auto border border-line-mid px-[10px] py-[3px] text-ink-muted"
+          onClick={onJump}
+          className="ml-auto border border-line-mid px-[10px] py-[3px] text-ink-muted transition-colors hover:text-ink"
         >
-          ⌘K · ask AI
+          jump to file
         </button>
       </div>
+
+      {/* HERO — the AI assistant, made impossible to miss */}
       <button
-        onClick={onOpenPalette}
-        className="mt-2 flex w-full cursor-text items-center gap-[9px] border border-line bg-card px-3 py-[9px] text-left"
+        onClick={onAsk}
+        className="group relative mt-2 flex w-full items-center gap-[11px] overflow-hidden border px-3 py-[11px] text-left transition-[box-shadow,border-color]"
+        style={{
+          borderColor: "var(--c-accent-teal)",
+          background:
+            "linear-gradient(90deg, color-mix(in srgb, var(--c-accent-teal) 14%, var(--c-card)) 0%, var(--c-card) 70%)",
+          boxShadow: "0 0 24px -12px var(--c-accent-teal)",
+        }}
       >
-        <span className="font-mono text-[13px] text-accent-blue">▸</span>
-        <span className="font-mono text-[12.5px] text-ink-low">
-          jump to a model, or ask the assistant about my work…
+        {/* shimmer sweep on hover */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 opacity-0 transition-all duration-700 ease-out group-hover:left-[110%] group-hover:opacity-100"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, color-mix(in srgb, var(--c-accent-teal) 22%, transparent), transparent)",
+          }}
+        />
+        <span
+          className="font-mono text-[15px] text-accent-teal"
+          style={{ animation: "statuspulse 2s infinite" }}
+          aria-hidden
+        >
+          ✦
         </span>
-        <span className="inline-block h-[15px] w-[7px] animate-blink bg-accent-teal" />
+        <span className="flex min-w-0 flex-col">
+          <span className="font-mono text-[12.5px] font-semibold text-ink">
+            Ask my AI anything about my work
+          </span>
+          <span className="truncate font-mono text-[11px] text-ink-low">
+            projects · stack · experience — answered in seconds
+          </span>
+        </span>
+        <span className="ml-auto flex flex-none items-center gap-[2px] border border-line-mid bg-panel px-[7px] py-[3px] font-mono text-[10.5px] text-ink-muted transition-colors group-hover:border-accent-teal group-hover:text-accent-teal">
+          ⌘K
+        </span>
       </button>
     </div>
   );

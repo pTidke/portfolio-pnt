@@ -42,6 +42,7 @@ export default function Workspace() {
   const [view, setView] = useState<ViewId>("overview");
   const [modalId, setModalId] = useState<ModalId | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteMode, setPaletteMode] = useState<"jump" | "ask">("jump");
   const [booted, setBooted] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [vw, setVw] = useState(1200);
@@ -53,6 +54,7 @@ export default function Workspace() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        setPaletteMode("ask"); // ⌘K jumps straight into the AI assistant
         setPaletteOpen((p) => !p);
       } else if (e.key === "Escape") {
         setPaletteOpen(false);
@@ -133,7 +135,14 @@ export default function Workspace() {
       ? null
       : (view as NavKey);
 
-  const openPalette = useCallback(() => setPaletteOpen(true), []);
+  const openJump = useCallback(() => {
+    setPaletteMode("jump");
+    setPaletteOpen(true);
+  }, []);
+  const openAsk = useCallback(() => {
+    setPaletteMode("ask");
+    setPaletteOpen(true);
+  }, []);
 
   const handleJump = useCallback(
     (item: JumpItem) => {
@@ -168,10 +177,10 @@ export default function Workspace() {
         }
       >
         {mobile ? (
-          <MobileTopBar onOpenPalette={openPalette} />
+          <MobileTopBar onOpenPalette={openAsk} />
         ) : (
           <>
-            <WindowChrome onOpenPalette={openPalette} />
+            <WindowChrome onOpenPalette={openJump} />
             <NavHeader
               view={view}
               modalLabel={modalId ? modalLabel(modalId) : null}
@@ -222,9 +231,9 @@ export default function Workspace() {
         </div>
 
         {mobile ? (
-          <MobileAskBar onOpenPalette={openPalette} />
+          <MobileAskBar onOpenPalette={openAsk} />
         ) : (
-          <ConsoleDock onOpenPalette={openPalette} />
+          <ConsoleDock onAsk={openAsk} onJump={openJump} />
         )}
       </div>
 
@@ -232,6 +241,7 @@ export default function Workspace() {
 
       <CommandPalette
         open={paletteOpen}
+        initialMode={paletteMode}
         accent={ACCENT}
         onClose={() => setPaletteOpen(false)}
         onJump={handleJump}

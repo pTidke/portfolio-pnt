@@ -23,48 +23,55 @@ import OpenAI from "openai";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-const endpoint = process.env.AZURE_AI_PROJECT_ENDPOINT;
-const agentName = process.env.AZURE_AI_AGENT_NAME;
-// Optional: pin a published version. Omit to use the agent's latest/active version.
-const agentVersion = process.env.AZURE_AI_AGENT_VERSION;
-const apiKey = process.env.AZURE_AI_API_KEY;
-
 const MAX_MESSAGE_LEN = 2000;
 
-let openaiClient: OpenAI | null = null;
+/* Read an env var, trimming whitespace and any surrounding quotes. Vercel stores
+   values verbatim — if a value was pasted with "quotes" they end up in the
+   string and break URLs / silently disable the key path. Strip them defensively. */
+function env(name: string): string | undefined {
+  const raw = process.env[name];
+  if (raw == null) return undefined;
+  const v = raw.trim().replace(/^['"]|['"]$/g, "").trim();
+  return v.length ? v : undefined;
+}
 
-/* Build the OpenAI client once and reuse it (token / connection caching). */
-function getOpenAI(): OpenAI {
+// Read env per-request (not at module scope) so values are always the runtime
+// ones and never captured at build time.
+function config() {
+  return {
+    endpoint: env("AZURE_AI_PROJECT_ENDPOINT"),
+    agentName: env("AZURE_AI_AGENT_NAME"),
+    agentVersion: env("AZURE_AI_AGENT_VERSION"),
+    apiKey: env("AZURE_AI_API_KEY"),
+  };
+}
+
+function getOpenAI(cfg: ReturnType<typeof config>): OpenAI {
+  const { endpoint, agentName, apiKey } = cfg;
   if (!endpoint || !agentName) {
     throw new Error(
       "Azure agent not configured: set AZURE_AI_PROJECT_ENDPOINT and AZURE_AI_AGENT_NAME",
     );
   }
-  if (openaiClient) return openaiClient;
 
   if (apiKey) {
     // Key auth — Azure expects the key in the `api-key` header. The `apiKey`
     // field satisfies the OpenAI SDK; the header is what the service reads.
-    openaiClient = new OpenAI({
+    return new OpenAI({
       baseURL: `${endpoint}/openai/v1`,
       apiKey,
       defaultHeaders: { "api-key": apiKey },
     });
-  } else {
-    // Entra ID — let AIProjectClient wire the bearer-token provider + base URL.
-    openaiClient = new AIProjectClient(
-      endpoint,
-      new DefaultAzureCredential(),
-    ).getOpenAIClient();
   }
-  return openaiClient;
+  // Entra ID — let AIProjectClient wire the bearer-token provider + base URL.
+  return new AIProjectClient(endpoint, new DefaultAzureCredential()).getOpenAIClient();
 }
 
-function agentRef() {
+function agentRef(cfg: ReturnType<typeof config>) {
   return {
     type: "agent_reference" as const,
-    name: agentName,
-    ...(agentVersion ? { version: agentVersion } : {}),
+    name: cfg.agentName,
+    ...(cfg.agentVersion ? { version: cfg.agentVersion } : {}),
   };
 }
 
@@ -87,8 +94,16 @@ export async function POST(req: Request) {
   if (!message) return bad("message is required");
   if (message.length > MAX_MESSAGE_LEN) return bad("message too long");
 
+  const cfg = config();
+  // Non-secret diagnostic: confirms what the deployed function actually sees.
+  console.log("[/api/ask] auth:", cfg.apiKey ? "key" : "entra", {
+    hasKey: Boolean(cfg.apiKey),
+    hasEndpoint: Boolean(cfg.endpoint),
+    hasAgent: Boolean(cfg.agentName),
+  });
+
   try {
-    const openai = getOpenAI();
+    const openai = getOpenAI(cfg);
 
     // First turn → new conversation; later turns reuse the id for continuity.
     if (!conversationId) {
@@ -101,7 +116,7 @@ export async function POST(req: Request) {
     const response = await openai.responses.create({
       conversation: conversationId,
       input: message,
-      agent_reference: agentRef(),
+      agent_reference: agentRef(cfg),
     } as never);
 
     return NextResponse.json({

@@ -20,13 +20,15 @@ export default function CommandPalette({
   accent,
   onClose,
   onJump,
+  initialMode = "jump",
 }: {
   open: boolean;
   accent: string;
   onClose: () => void;
   onJump: (item: JumpItem) => void;
+  initialMode?: Mode;
 }) {
-  const [mode, setMode] = useState<Mode>("jump");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [query, setQuery] = useState("");
   const [sel, setSel] = useState(0);
   const [askInput, setAskInput] = useState("");
@@ -34,18 +36,23 @@ export default function CommandPalette({
   const [sending, setSending] = useState(false);
   const conversationId = useRef<string | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
+  const askRef = useRef<HTMLTextAreaElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const keyNav = useRef(false);
 
   useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 40);
+      setMode(initialMode); // open in the mode the trigger asked for (⌘K → ask)
+      setTimeout(
+        () => (initialMode === "ask" ? askRef : inputRef).current?.focus(),
+        40,
+      );
     } else {
       setQuery("");
       setSel(0);
     }
-  }, [open, mode]);
+  }, [open, initialMode]);
 
   const groups = useMemo(() => {
     const q = query.toLowerCase().trim();
@@ -320,14 +327,21 @@ export default function CommandPalette({
                     </div>
                   )}
                 </div>
-                <div className="flex flex-none gap-[9px] border-t border-line bg-code px-[14px] py-3">
-                  <input
-                    ref={mode === "ask" ? inputRef : undefined}
+                <div className="flex flex-none items-end gap-[9px] border-t border-line bg-code px-[14px] py-3">
+                  <textarea
+                    ref={askRef}
+                    rows={1}
                     value={askInput}
                     onChange={(e) => setAskInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendAsk()}
-                    placeholder="ask about my experience, projects, stack…"
-                    className="flex-1 border border-line-mid bg-card px-3 py-[10px] text-[13px] text-ink"
+                    onKeyDown={(e) => {
+                      // Enter sends; Shift+Enter inserts a newline.
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendAsk();
+                      }
+                    }}
+                    placeholder="ask about my experience, projects, stack…  (⇧↵ for new line)"
+                    className="max-h-[120px] flex-1 resize-none border border-line-mid bg-card px-3 py-[10px] text-[13px] leading-[1.45] text-ink [field-sizing:content]"
                   />
                   <motion.button
                     onClick={sendAsk}
