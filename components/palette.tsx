@@ -282,7 +282,7 @@ export default function CommandPalette({
                         .
                       </div>
                       <div className="mt-[10px] font-mono text-[11px] text-ink-low">
-                        Switch to{" "}
+                        Still improvising on building this AI assistant — Switch to{" "}
                         <span className="text-accent-blue">jump</span> to reach any
                         section now.
                       </div>
