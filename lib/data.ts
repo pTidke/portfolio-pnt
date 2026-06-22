@@ -468,9 +468,9 @@ export const PHOTOS: Photo[] = GENERATED_PHOTOS.map((p) => ({
 
 /* ── AI ASSISTANT (UI only — backend stubbed for now) ──────────────────── */
 export const ASK_SUGGESTIONS = [
-  '"how did you cut query latency at TresVista?"',
-  '"how does KALM work?"',
-  '"are you open to roles?"',
+  '"Tell me about his experience at TresVista"',
+  '"What are his technical skills?"',
+  '"How can I reach out to him?"',
 ];
 
 /* ── derived file slugs ────────────────────────────────────────────────── */

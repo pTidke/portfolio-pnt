@@ -267,12 +267,12 @@ export default function CommandPalette({
                 >
                   {messages.length === 0 && (
                     <div className="text-[13px] leading-[1.5] text-ink-faint">
-                      <span className="mb-[10px] inline-flex items-center gap-[6px] border border-line-mid px-[8px] py-[3px] font-mono text-[10px] uppercase tracking-[1px] text-accent-amber">
-                        <span className="dot inline-block h-[5px] w-[5px] bg-accent-amber" />
-                        preview
+                      <span className="mb-[10px] inline-flex items-center gap-[6px] border border-line-mid px-[8px] py-[3px] font-mono text-[10px] uppercase tracking-[1px] text-accent-red">
+                        <span className="dot inline-block h-[5px] w-[5px] bg-accent-green" />
+                        Live
                       </span>
                       <div>
-                        Soon you&apos;ll be able to ask anything about my work —{" "}
+                        You can ask anything about my work —{" "}
                         {ASK_SUGGESTIONS.map((s, i) => (
                           <span key={i}>
                             <span className="text-accent-blue">{s}</span>
@@ -282,7 +282,7 @@ export default function CommandPalette({
                         .
                       </div>
                       <div className="mt-[10px] font-mono text-[11px] text-ink-low">
-                        Live answers are coming soon. Switch to{" "}
+                        Switch to{" "}
                         <span className="text-accent-blue">jump</span> to reach any
                         section now.
                       </div>
@@ -306,10 +306,10 @@ export default function CommandPalette({
                           m.role === "user"
                             ? { background: accent, color: "var(--c-on-accent)" }
                             : {
-                                background: "var(--c-active)",
-                                color: "var(--c-ink-soft)",
-                                border: "1px solid var(--c-line-mid)",
-                              }
+                              background: "var(--c-active)",
+                              color: "var(--c-ink-soft)",
+                              border: "1px solid var(--c-line-mid)",
+                            }
                         }
                       >
                         {m.role === "assistant" ? (
