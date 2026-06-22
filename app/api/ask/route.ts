@@ -1,18 +1,23 @@
 import { NextResponse } from "next/server";
 import { AIProjectClient } from "@azure/ai-projects";
 import { DefaultAzureCredential } from "@azure/identity";
+import OpenAI from "openai";
 
 /* Ask AI backend — relay to the "PrajwalAI" Azure AI Foundry agent.
 
    This is the newer Foundry agent type, reached through the OpenAI Responses
-   protocol: AIProjectClient.getOpenAIClient() -> conversations + responses, with
-   the agent passed as an `agent_reference`. The agent already holds its
-   instructions + grounding in the Foundry portal, so this route just drives the
-   conversation: create conversation (or reuse one) -> respond to the new input.
+   protocol: an OpenAI client pointed at the Foundry project endpoint, driving
+   conversations + responses with the agent passed as an `agent_reference`. The
+   agent already holds its instructions + grounding in the Foundry portal, so
+   this route just drives the conversation: create conversation (or reuse one) ->
+   respond to the new input.
 
-   Auth is Entra ID via DefaultAzureCredential. Off-Azure (e.g. Vercel) it reads
-   a service principal from AZURE_TENANT_ID / AZURE_CLIENT_ID / AZURE_CLIENT_SECRET.
-   That principal needs an RBAC role (Azure AI User) on the Foundry resource. */
+   Two auth modes, picked by env:
+   1. API KEY (AZURE_AI_API_KEY) — the Foundry resource key. Needs only access to
+      the resource, NOT Entra ID / app-registration rights. Use this on Vercel.
+   2. Entra ID (DefaultAzureCredential) — used when no key is set. Locally this
+      rides your `az login`; on Azure it can use a managed identity / service
+      principal. Picked automatically as the fallback. */
 
 // Azure SDK needs the Node runtime (not Edge). Agent runs can be slow.
 export const runtime = "nodejs";
@@ -22,20 +27,37 @@ const endpoint = process.env.AZURE_AI_PROJECT_ENDPOINT;
 const agentName = process.env.AZURE_AI_AGENT_NAME;
 // Optional: pin a published version. Omit to use the agent's latest/active version.
 const agentVersion = process.env.AZURE_AI_AGENT_VERSION;
+const apiKey = process.env.AZURE_AI_API_KEY;
 
 const MAX_MESSAGE_LEN = 2000;
 
-let client: AIProjectClient | null = null;
+let openaiClient: OpenAI | null = null;
 
-function getClient(): AIProjectClient {
+/* Build the OpenAI client once and reuse it (token / connection caching). */
+function getOpenAI(): OpenAI {
   if (!endpoint || !agentName) {
     throw new Error(
       "Azure agent not configured: set AZURE_AI_PROJECT_ENDPOINT and AZURE_AI_AGENT_NAME",
     );
   }
-  // Reuse one client + credential across invocations (token caching).
-  client ??= new AIProjectClient(endpoint, new DefaultAzureCredential());
-  return client;
+  if (openaiClient) return openaiClient;
+
+  if (apiKey) {
+    // Key auth — Azure expects the key in the `api-key` header. The `apiKey`
+    // field satisfies the OpenAI SDK; the header is what the service reads.
+    openaiClient = new OpenAI({
+      baseURL: `${endpoint}/openai/v1`,
+      apiKey,
+      defaultHeaders: { "api-key": apiKey },
+    });
+  } else {
+    // Entra ID — let AIProjectClient wire the bearer-token provider + base URL.
+    openaiClient = new AIProjectClient(
+      endpoint,
+      new DefaultAzureCredential(),
+    ).getOpenAIClient();
+  }
+  return openaiClient;
 }
 
 function agentRef() {
@@ -66,7 +88,7 @@ export async function POST(req: Request) {
   if (message.length > MAX_MESSAGE_LEN) return bad("message too long");
 
   try {
-    const openai = getClient().getOpenAIClient();
+    const openai = getOpenAI();
 
     // First turn → new conversation; later turns reuse the id for continuity.
     if (!conversationId) {
@@ -74,10 +96,13 @@ export async function POST(req: Request) {
       conversationId = conversation.id;
     }
 
-    const response = await openai.responses.create(
-      { conversation: conversationId, input: message },
-      { body: { agent_reference: agentRef() } },
-    );
+    // agent_reference is an Azure Foundry extension to the Responses body — not in
+    // the OpenAI types, hence the cast. Top-level works for both auth clients.
+    const response = await openai.responses.create({
+      conversation: conversationId,
+      input: message,
+      agent_reference: agentRef(),
+    } as never);
 
     return NextResponse.json({
       answer: response.output_text?.trim() || "(the assistant returned no text)",
