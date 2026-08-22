@@ -92,7 +92,7 @@ export const NODES: DagNode[] = [
   { id: "p3", kind: "MART", label: "mart.trafficsens", sub: "accident prediction", body: "ML + geospatial severity and hotspot detection.", accent: "amber", col: 2, row: 2 },
   { id: "p4", kind: "MART", label: "mart.allabouttax", sub: "AI tax advisory", body: "Stateful AI assistant with streaming + RBAC.", accent: "amber", col: 2, row: 3 },
   { id: "p5", kind: "MART", label: "mart.wildfire", sub: "fire-risk ML", body: "Geospatial XGBoost forest-fire risk assessment.", accent: "amber", col: 2, row: 4 },
-  { id: "p6", kind: "MART", label: "mart.medivu", sub: "healthcare analytics", body: "1M+ clinical records in PySpark, surfaced in Tableau.", accent: "amber", col: 2, row: 5 },
+  { id: "p6", kind: "MART", label: "mart.medivu", sub: "healthcare analytics", body: "Modeled spatial access to care across 1,389 ZCTAs using a full Python pipeline.", accent: "amber", col: 2, row: 5 },
   // output
   { id: "contact", kind: "OUTPUT", label: "mart.contact", sub: "links · resume", body: "How to reach me + the resume download.", accent: "green", col: 3, row: 0 },
   { id: "gallery", kind: "OUTPUT", label: "exp.gallery", sub: "photography", body: "Frames from off the clock.", accent: "violet", col: 3, row: 1 },
@@ -337,19 +337,19 @@ export const PROJECTS: Project[] = [
     ],
   },
   {
-    id: "p6", file: "medivu.sql", name: "Medi-vu", slug: "medi_vu",
-    problem: "Clinical-outcome data sat unused without a scalable way to analyze and present it.",
-    approach: "A scalable healthcare analytics platform: 1M+ records processed in PySpark and surfaced through interactive executive Tableau dashboards.",
+    id: "p6", file: "medivu.sql", name: "Medi-Vu", slug: "medi_vu",
+    problem: "Ranking healthcare access often relies on weights nobody can justify. The question was whether a defensible statewide index could be built and shown to hold up.",
+    approach: "A Python pipeline integrating 10+ public health and geographic sources across census tract, ZCTA, and county geographies, modeling spatial access to care and testing the result with Monte Carlo intervals and independent validators.",
+    outcome: "Cluster membership is not individual rank. The worst-ranked areas are almost all tiny, under 5,500 people, but hotspot analysis surfaces mid-ranked towns sitting inside badly served regions, which affects an order of magnitude more people. Small ZCTAs are 15.6x more likely to land in the worst decile, and it survives full uncertainty.",
     metrics: [
-      { label: "records", value: "1M+", accent: true },
-      { label: "engine", value: "PySpark" },
-      { label: "BI", value: "Tableau" },
+      { label: "areas", value: "1,389 ZCTAs", accent: true },
+      { label: "sources", value: "10+" },
+      { label: "validators", value: "2 independent" },
     ],
-    stack: ["Databricks", "PySpark", "Tableau", "SQL"],
+    stack: ["Python", "Pandera", "MapLibre", "Next.js", "Vercel", "GeoPandas", "PMTiles"],
     links: [
       { label: "site", href: "https://sites.google.com/sdsu.edu/medi-vu/home", kind: "live" },
-      { label: "Tableau", href: "https://public.tableau.com/app/profile/prajwal.tidke/viz/MediVu/Story1", kind: "data" },
-      { label: "repo", href: "https://github.com/pTidke/Medi-vu", kind: "repo" },
+      { label: "repo", href: "https://github.com/pTidke/medi-vu-deep", kind: "repo" },
     ],
   },
 ];

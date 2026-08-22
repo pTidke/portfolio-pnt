@@ -343,6 +343,7 @@ function ProjectSection({ id, accent }: { id: SectionId; accent: string }) {
         {[
           { label: "problem", text: p.problem },
           { label: "approach", text: p.approach },
+          ...(p.outcome ? [{ label: "outcome", text: p.outcome }] : []),
         ].map((b) => (
           <Item key={b.label} className="min-w-[200px] flex-1">
             <div className="h-full border border-line bg-card p-[14px]">

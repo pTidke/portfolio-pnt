@@ -98,6 +98,7 @@ export interface Project {
   slug: string;
   problem: string;
   approach: string;
+  outcome?: string;
   metrics: { label: string; value: string; accent?: boolean }[];
   stack: string[];
   links?: ExternalLink[];
