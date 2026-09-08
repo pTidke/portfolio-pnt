@@ -398,11 +398,6 @@ function ProjectSection({ id, accent }: { id: SectionId; accent: string }) {
           depends_on: stg.experience, stg.skills
         </div>
       </Item>
-      <Item>
-        <div className="mt-4">
-          <ResumeButton accent={accent} label="↓ resume.pdf" />
-        </div>
-      </Item>
     </SectionShell>
   );
 }

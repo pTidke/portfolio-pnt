@@ -348,7 +348,7 @@ export const PROJECTS: Project[] = [
     ],
     stack: ["Python", "Pandera", "MapLibre", "Next.js", "Vercel", "GeoPandas", "PMTiles"],
     links: [
-      { label: "site", href: "https://sites.google.com/sdsu.edu/medi-vu/home", kind: "live" },
+      { label: "site", href: "https://medi-vu-deep.vercel.app/", kind: "live" },
       { label: "repo", href: "https://github.com/pTidke/medi-vu-deep", kind: "repo" },
     ],
   },
@@ -384,6 +384,18 @@ export const EDUCATION: Education[] = [
 
 /* ── CERTIFICATES ──────────────────────────────────────────────────────── */
 export const CERTIFICATES = [
+  {
+    title: "Azure Databricks Data Engineer Associate (DP-750)",
+    issuer: "Microsoft",
+    span: "Issued 2026",
+    href: "https://learn.microsoft.com/api/credentials/share/en-us/PRAJWALTIDKE-0602/A1338BA04E166674?sharingId=1ED3CF2F4236EAE2",
+  },
+  {
+    title: "Azure AI Cloud Developer Associate (AI-200)",
+    issuer: "Microsoft",
+    span: "Issued 2026",
+    href: "https://learn.microsoft.com/api/credentials/share/en-us/PRAJWALTIDKE-0602/51D983FD1CBB494D?sharingId=1ED3CF2F4236EAE2",
+  },
   {
     title: "dbt Fundamentals",
     issuer: "dbt Labs",
