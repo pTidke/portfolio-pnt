@@ -187,7 +187,7 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: "Senior Data Engineer",
-    company: "TresVista Analytics",
+    company: "CPP Investments",
     span: "Oct 2023 — Aug 2024",
     highlight: "−$42K/yr compute · 1.2 TB/day",
     body: "Designed ELT pipelines on a Databricks Medallion architecture orchestrating portfolio analytics for a $550B+ AUM fund-of-funds client (+30% reliability). Architected an event-driven AWS SQS/SNS → S3 ingestion system processing 1.2 TB/day, and tuned high-cardinality tables with Delta Lake Z-Ordering — cutting compute $42K/year and median query latency 38%. Integrated 7 market & alt-data feeds via a custom API connector with PyTest data-contract CI gates (45% less manual analysis, 100% SLA). Best Mentor Award.",
@@ -207,7 +207,7 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: "Senior Data Engineer",
-    company: "LTIMindtree",
+    company: "Carrier Global",
     span: "Jul 2021 — Oct 2023",
     highlight: "$650K/yr saved · 99.9% SLA",
     body: "Directed technical planning, code reviews, and Agile delivery across 5+ enterprise clients. Led the migration of legacy infrastructure to AWS Glue and Snowflake with SCD Type 2 history tracking — securing $650K/year in operating savings and lifting data-freshness SLAs to 99.9%. Built curated reporting datasets feeding Power BI (NA) and AWS QuickSight (EU) across SQL Server, Oracle, and Snowflake, standardizing the metrics consumed by C-suite across both regions.",
@@ -226,7 +226,7 @@ export const EXPERIENCE: Experience[] = [
   },
   {
     role: "Data Engineer",
-    company: "LTIMindtree",
+    company: "Carrier Global",
     span: "Jul 2020 — Jul 2021",
     highlight: "regulatory reporting −80%",
     body: "Overhauled legacy batch ETL, tuning Spark and Snowflake via predicate pushdown and indexing strategies to accelerate monthly regulatory reporting timelines by 80%. Built a schema-validation framework across 7+ downstream reporting pipelines, catching schema drift and cutting production data errors by 63%.",
@@ -480,7 +480,7 @@ export const PHOTOS: Photo[] = GENERATED_PHOTOS.map((p) => ({
 
 /* ── AI ASSISTANT (UI only — backend stubbed for now) ──────────────────── */
 export const ASK_SUGGESTIONS = [
-  '"Tell me about his experience at TresVista"',
+  '"Tell me about his experience at CPP Investments"',
   '"What are his technical skills?"',
   '"How can I reach out to him?"',
 ];
